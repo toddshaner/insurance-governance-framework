@@ -2,12 +2,15 @@
 
 Classify a proposed AI use case in insurance operations by risk tier, and see the review expectations and controls required at that tier.
 
+The assessment flow guides the user through structured questions, generates the use-case summary, and previews the tier without putting assessment details in the URL.
+
 ## Stack
 
 - Next.js 14 (App Router) + TypeScript
 - Tailwind CSS
 - Vitest for unit tests
 - No database, no auth, no server-side logging
+- No URL-based assessment payloads; the live assessment runs in the browser
 
 ## Run locally
 
@@ -32,10 +35,11 @@ Push to a GitHub repo, import into Vercel, no configuration needed. Free tier is
 
 ## Where the framework lives
 
-- `src/lib/framework/types.ts` — type definitions and framework version
-- `src/lib/framework/rules.ts` — the rules table, controls matrix, and review matrix (single source of truth)
-- `src/lib/framework/engine.ts` — the pure `classify(input)` function
-- `src/lib/framework/engine.test.ts` — tests that assert each rule fires on the expected inputs
-- `src/app/framework/page.tsx` — static render of the framework, same data the engine evaluates
+- `src/lib/framework/types.ts` - type definitions and framework version
+- `src/lib/framework/rules.ts` - rules table, controls matrix, and review matrix
+- `src/lib/framework/engine.ts` - the pure `classify(input)` function
+- `src/lib/framework/engine.test.ts` - tests that assert rule outcomes
+- `src/app/AssessForm.tsx` - guided assessment workspace and live preview
+- `src/app/framework/page.tsx` - static render of the framework
 
 To change the framework, edit `rules.ts` and update the tests.

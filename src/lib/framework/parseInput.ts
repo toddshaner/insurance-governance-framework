@@ -17,10 +17,10 @@ const many = (v: string | string[] | undefined): string[] =>
   Array.isArray(v) ? v : v ? [v] : [];
 
 const asAudience = (v: string): Audience =>
-  v === "external" || v === "both" ? v : "internal";
+  v === "internal" || v === "external" || v === "both" ? v : "both";
 
 const asAiMode = (v: string): AiMode =>
-  v === "generative" ? "generative" : "classifying";
+  v === "classifying" ? "classifying" : "generative";
 
 const asDataSource = (v: string): DataSource => {
   const allowed: DataSource[] = [
@@ -31,7 +31,7 @@ const asDataSource = (v: string): DataSource => {
   ];
   return (allowed as string[]).includes(v)
     ? (v as DataSource)
-    : "vendor_documented";
+    : "unknown";
 };
 
 const asDomains = (v: string[]): RegulatedDomain[] => {
@@ -58,13 +58,13 @@ const asDecisionAuthority = (
 
 const asHumanReview = (v: string, clientFacing: boolean): HumanReview => {
   if (!clientFacing) return "not_applicable";
-  return v === "no" ? "no" : "yes";
+  return v === "yes" ? "yes" : "no";
 };
 
 export const parseInput = (params: SearchParams): UseCaseInput => {
   const description = one(params.description).slice(0, 2000);
   const audience = asAudience(one(params.audience));
-  const client_facing = one(params.client_facing) === "yes";
+  const client_facing = one(params.client_facing) !== "no";
   const regulated_domains = asDomains(many(params.regulated_domains));
   const ai_mode = asAiMode(one(params.ai_mode));
   const decision_authority = asDecisionAuthority(

@@ -101,7 +101,7 @@ export default function FrameworkPage() {
         <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-600">
           Controls matrix
         </h2>
-        <div className="overflow-hidden rounded-md border border-zinc-200 bg-white">
+        <div className="overflow-x-auto rounded-md border border-zinc-200 bg-white">
           <table className="w-full text-sm">
             <thead className="bg-zinc-50 text-left">
               <tr>
@@ -155,7 +155,7 @@ export default function FrameworkPage() {
         <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-600">
           Review expectations
         </h2>
-        <div className="overflow-hidden rounded-md border border-zinc-200 bg-white">
+        <div className="overflow-x-auto rounded-md border border-zinc-200 bg-white">
           <table className="w-full text-sm">
             <thead className="bg-zinc-50 text-left">
               <tr>

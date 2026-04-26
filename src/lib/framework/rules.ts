@@ -188,6 +188,22 @@ export const rules: RuleDefinition[] = [
     test: (i) => i.data_source === "public_unknown",
   },
   {
+    id: "R8a",
+    title: "Unknown data provenance outside client or regulated exposure",
+    kind: "base",
+    severity: "moderate",
+    conditionText:
+      "Training data source is Unknown, even though output does not reach a client and the use case does not touch pricing, coverage, or claims.",
+    rationale:
+      "Unknown data provenance should not be treated as Low risk. The team must document the source before relying on the use case in production.",
+    sources: [
+      "EU AI Act Art. 10 - Data and data governance",
+      "NAIC Model Bulletin on the Use of AI Systems by Insurers (2023) - Data governance",
+    ],
+    test: (i) =>
+      i.data_source === "unknown" && !i.client_facing && !hasRegulated(i),
+  },
+  {
     id: "R2",
     title: "High-risk use case without logging",
     kind: "modifier",

@@ -8,9 +8,9 @@ export default function AssessPage() {
           Assess an AI use case
         </h1>
         <p className="text-sm text-zinc-600">
-          Describe a proposed AI use case. The tool returns a risk tier, the
-          review it requires, and the controls that must be in place before it
-          runs.
+          Answer guided questions and the tool builds the use-case summary,
+          previews the risk tier, and shows the review and controls required
+          before launch.
         </p>
       </section>
       <AssessForm />

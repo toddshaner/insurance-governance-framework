@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { classify } from "./engine";
-import type { UseCaseInput } from "./types";
+import { parseInput } from "./parseInput";
+import { tierRank, type UseCaseInput } from "./types";
 
 const base: UseCaseInput = {
   description: "",
@@ -152,6 +153,17 @@ describe("classify — tier outcomes", () => {
     expect(result.firedRules.map((r) => r.id)).toContain("R8");
   });
 
+  it("does not classify unknown data provenance below public-unknown data", () => {
+    const unknown = classify(withInput({ data_source: "unknown" }));
+    const publicUnknown = classify(withInput({ data_source: "public_unknown" }));
+
+    expect(unknown.tier).toBe("moderate");
+    expect(unknown.firedRules.map((r) => r.id)).toContain("R8a");
+    expect(tierRank[unknown.tier]).toBeGreaterThanOrEqual(
+      tierRank[publicUnknown.tier],
+    );
+  });
+
   it("fires R6 when external users operate the tool without client-facing output", () => {
     const result = classify(
       withInput({
@@ -226,5 +238,13 @@ describe("classify — metadata", () => {
     const result = classify(base);
     expect(result.frameworkVersion).toBe("1.0");
     expect(result.frameworkLastUpdated).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
+});
+
+describe("parseInput fail-closed defaults", () => {
+  it("does not turn a malformed result URL into a Low assessment", () => {
+    const result = classify(parseInput({}));
+    expect(result.tier).toBe("prohibited");
+    expect(result.firedRules.map((r) => r.id)).toContain("R1");
   });
 });
