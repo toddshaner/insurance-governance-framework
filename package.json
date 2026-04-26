@@ -1,7 +1,18 @@
 {
   "name": "insurance-governance-framework",
-  "version": "1.0.0",
+  "version": "1.1.0",
+  "description": "A deterministic AI governance assessment tool for insurance use cases.",
   "private": true,
+  "license": "MIT",
+  "author": "Todd Shaner",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toddshaner/insurance-governance-framework.git"
+  },
+  "bugs": {
+    "url": "https://github.com/toddshaner/insurance-governance-framework/issues"
+  },
+  "homepage": "https://github.com/toddshaner/insurance-governance-framework#readme",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
