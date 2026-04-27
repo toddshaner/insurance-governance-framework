@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2026-04-26
+
+### Added
+
+- Remediation guidance for every fired rule, including specific actions, evidence requests, and accountable owner.
+- Jurisdiction overlay prompts for NAIC model bulletin states, New York, Colorado, California, the EU AI Act, and unresolved jurisdiction.
+- Coverage-readiness workspace for AI exclusions, broker disclosure, vendor risk transfer, IP exposure, and customer-impacting decision exposure.
+- Scenario lab with 10 messy insurance AI examples that compare expected tier to the deterministic engine result.
+- Tests requiring remediation coverage for every rule, scenario alignment, and coverage-readiness behavior.
+
+### Changed
+
+- Repositioned the product from a single assessment form to an AI insurance governance workbench.
+- Updated framework metadata to v1.2.
+- Cleaned display strings to use ASCII-safe punctuation.
+
 ## [1.1.0] - 2026-04-26
 
 ### Added

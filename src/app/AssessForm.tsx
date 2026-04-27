@@ -3,6 +3,12 @@
 import { useMemo, useState } from "react";
 import { classify } from "@/lib/framework/engine";
 import { controlLabels } from "@/lib/framework/rules";
+import { remediationByRule } from "@/lib/framework/remediation";
+import {
+  jurisdictionGuidance,
+  jurisdictionOptions,
+  type JurisdictionKey,
+} from "@/lib/framework/jurisdictions";
 import {
   controlStatusClass,
   controlStatusLabel,
@@ -60,6 +66,7 @@ type AssessmentState = {
   humanReview: HumanReview | "unknown" | "";
   dataSource: DataSource | "";
   logging: YesNoUnknown | "";
+  jurisdictions: JurisdictionKey[];
   context: string;
 };
 
@@ -75,6 +82,7 @@ const initialState: AssessmentState = {
   humanReview: "",
   dataSource: "",
   logging: "",
+  jurisdictions: [],
   context: "",
 };
 
@@ -122,6 +130,15 @@ const yesNoUnknownLabels: Record<YesNoUnknown, string> = {
 const aiModeLabels: Record<AiMode | "unknown", string> = {
   generative: "Generative",
   classifying: "Classifying, scoring, or predicting",
+  unknown: "Not sure",
+};
+
+const jurisdictionLabels: Record<JurisdictionKey, string> = {
+  naic_model: "NAIC model bulletin state",
+  new_york: "New York",
+  colorado: "Colorado",
+  california: "California",
+  eu: "European Union",
   unknown: "Not sure",
 };
 
@@ -173,6 +190,10 @@ export default function AssessForm() {
   );
   const result = useMemo(() => (input ? classify(input) : null), [input]);
   const assumptions = useMemo(() => buildAssumptions(state), [state]);
+  const selectedJurisdictions = useMemo(
+    () => state.jurisdictions.map((key) => jurisdictionGuidance[key]),
+    [state.jurisdictions],
+  );
 
   const toggleDomain = (domain: RegulatedDomain) => {
     setState((current) => {
@@ -189,6 +210,30 @@ export default function AssessForm() {
           current.decisionAuthority === "not_applicable"
             ? ""
             : current.decisionAuthority,
+      };
+    });
+  };
+
+  const toggleJurisdiction = (jurisdiction: JurisdictionKey) => {
+    setState((current) => {
+      if (jurisdiction === "unknown") {
+        return {
+          ...current,
+          jurisdictions: current.jurisdictions.includes("unknown")
+            ? []
+            : ["unknown"],
+        };
+      }
+
+      const withoutUnknown = current.jurisdictions.filter(
+        (item) => item !== "unknown",
+      );
+      const exists = withoutUnknown.includes(jurisdiction);
+      return {
+        ...current,
+        jurisdictions: exists
+          ? withoutUnknown.filter((item) => item !== jurisdiction)
+          : [...withoutUnknown, jurisdiction],
       };
     });
   };
@@ -407,6 +452,34 @@ export default function AssessForm() {
               Step 3
             </p>
             <h2 className="mt-1 text-lg font-semibold text-zinc-900">
+              Flag jurisdiction overlays
+            </h2>
+            <p className={helpCls}>
+              Pick any jurisdictions that may apply. This does not change the
+              deterministic tier yet; it adds review prompts to the packet.
+            </p>
+          </div>
+
+          <div className="grid gap-2 sm:grid-cols-2">
+            {jurisdictionOptions.map((jurisdiction) => (
+              <label key={jurisdiction} className={choiceCls}>
+                <input
+                  type="checkbox"
+                  checked={state.jurisdictions.includes(jurisdiction)}
+                  onChange={() => toggleJurisdiction(jurisdiction)}
+                />
+                <span>{jurisdictionLabels[jurisdiction]}</span>
+              </label>
+            ))}
+          </div>
+        </section>
+
+        <section className={`${sectionCls} space-y-5`}>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+              Step 4
+            </p>
+            <h2 className="mt-1 text-lg font-semibold text-zinc-900">
               Confirm evidence and controls
             </h2>
           </div>
@@ -518,6 +591,31 @@ export default function AssessForm() {
           </section>
         )}
 
+        {selectedJurisdictions.length > 0 && (
+          <section className="rounded-md border border-zinc-200 bg-white p-4">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-600">
+              Jurisdiction prompts
+            </h2>
+            <ul className="mt-3 space-y-3">
+              {selectedJurisdictions.map((jurisdiction) => (
+                <li key={jurisdiction.key} className="border-t border-zinc-200 pt-3 first:border-t-0 first:pt-0">
+                  <p className="text-sm font-medium text-zinc-900">
+                    {jurisdiction.label}
+                  </p>
+                  <p className="mt-1 text-sm leading-6 text-zinc-700">
+                    {jurisdiction.whyItMatters}
+                  </p>
+                  <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-zinc-600">
+                    {jurisdiction.prompts.map((prompt) => (
+                      <li key={prompt}>{prompt}</li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
         {result && (
           <>
             <section className="rounded-md border border-zinc-200 bg-white p-4">
@@ -544,6 +642,21 @@ export default function AssessForm() {
                       <p className="mt-1 text-sm text-zinc-700">
                         {rule.rationale}
                       </p>
+                      {remediationByRule[rule.id] && (
+                        <div className="mt-3 rounded-md border border-zinc-200 bg-zinc-50 p-3">
+                          <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                            Remediation
+                          </p>
+                          <p className="mt-2 text-sm text-zinc-700">
+                            {remediationByRule[rule.id].issue}
+                          </p>
+                          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-zinc-700">
+                            {remediationByRule[rule.id].actions.map((action) => (
+                              <li key={action}>{action}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -742,6 +855,7 @@ const buildSummary = (state: AssessmentState): string => {
           ? "Client exposure is not yet confirmed."
           : "Client exposure has not been answered.";
   const regulated = regulatedSummary(state);
+  const jurisdictions = jurisdictionSummary(state);
   const aiMode = state.aiMode
     ? aiModeLabels[state.aiMode].toLowerCase()
     : "an unspecified AI mode";
@@ -763,12 +877,26 @@ const buildSummary = (state: AssessmentState): string => {
     `It is used by ${audience}.`,
     client,
     regulated,
+    jurisdictions,
     `The AI mode is ${aiMode}, using ${data}.`,
     logging,
     context ? `Additional context: ${context}` : "",
   ]
     .filter(Boolean)
     .join(" ");
+};
+
+const jurisdictionSummary = (state: AssessmentState): string => {
+  if (state.jurisdictions.length === 0) {
+    return "Jurisdiction overlays have not been selected.";
+  }
+  if (state.jurisdictions.includes("unknown")) {
+    return "Jurisdiction is not yet confirmed.";
+  }
+  const labels = state.jurisdictions.map(
+    (key) => jurisdictionGuidance[key].shortLabel,
+  );
+  return `Jurisdiction overlays flagged: ${joinList(labels)}.`;
 };
 
 const regulatedSummary = (state: AssessmentState): string => {

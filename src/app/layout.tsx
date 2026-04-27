@@ -6,7 +6,7 @@ import { FRAMEWORK_VERSION } from "@/lib/framework/types";
 export const metadata: Metadata = {
   title: "Insurance AI Governance Framework",
   description:
-    "Classify a proposed AI use case by risk tier and see the review expectations and controls required at that tier.",
+    "Assess insurance AI governance, jurisdiction prompts, remediation steps, and coverage-readiness gaps.",
 };
 
 export default function RootLayout({
@@ -24,7 +24,7 @@ export default function RootLayout({
             </Link>
             <nav className="flex gap-5 text-sm text-zinc-600">
               <Link href="/" className="hover:text-zinc-900">
-                Assess
+                Workbench
               </Link>
               <Link href="/framework" className="hover:text-zinc-900">
                 Framework

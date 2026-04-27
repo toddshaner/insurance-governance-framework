@@ -32,8 +32,8 @@ export const rules: RuleDefinition[] = [
     rationale:
       "Training data provenance is unknown and the use case touches clients or regulated decisions. Cannot proceed without a documented data source.",
     sources: [
-      "NAIC Model Bulletin on the Use of AI Systems by Insurers (2023) — Data governance",
-      "EU AI Act Art. 10 — Data and data governance",
+      "NAIC Model Bulletin on the Use of AI Systems by Insurers (2023) - Data governance",
+      "EU AI Act Art. 10 - Data and data governance",
     ],
     test: (i) =>
       i.data_source === "unknown" &&
@@ -49,9 +49,9 @@ export const rules: RuleDefinition[] = [
     rationale:
       "Autonomous AI decisioning on a regulated matter fails meaningful human oversight requirements.",
     sources: [
-      "EU AI Act Art. 14 — Human oversight",
-      "NAIC Model Bulletin §4 — Governance and risk management",
-      "NYDFS Circular Letter No. 7 (2024) — Use of AI in insurance underwriting and pricing",
+      "EU AI Act Art. 14 - Human oversight",
+      "NAIC Model Bulletin Section 4 - Governance and risk management",
+      "NYDFS Circular Letter No. 7 (2024) - Use of AI in insurance underwriting and pricing",
     ],
     test: (i) =>
       hasRegulated(i) && i.decision_authority === "decide_without_review",
@@ -66,8 +66,8 @@ export const rules: RuleDefinition[] = [
     rationale:
       "AI-driven regulated decisions require documented human review, audit trail, and bias monitoring.",
     sources: [
-      "NAIC Model Bulletin §4 — Governance and risk management",
-      "Colorado SB21-169 — Restrictions on insurers' use of external consumer data and algorithms",
+      "NAIC Model Bulletin Section 4 - Governance and risk management",
+      "Colorado SB21-169 - Restrictions on insurers' use of external consumer data and algorithms",
       "NYDFS Circular Letter No. 7 (2024)",
     ],
     test: (i) =>
@@ -83,7 +83,7 @@ export const rules: RuleDefinition[] = [
     rationale:
       "Recommendations materially influence regulated outcomes and require governance equivalent to decisioning use cases.",
     sources: [
-      "NAIC Model Bulletin §4 — Governance and risk management",
+      "NAIC Model Bulletin Section 4 - Governance and risk management",
       "Colorado SB21-169",
     ],
     test: (i) => hasRegulated(i) && i.decision_authority === "recommend",
@@ -98,7 +98,7 @@ export const rules: RuleDefinition[] = [
     rationale:
       "Unreviewed generative output to clients creates unbounded risk for hallucination, misstatement, and regulated disclosures.",
     sources: [
-      "NAIC Model Bulletin §4 — Consumer protection",
+      "NAIC Model Bulletin Section 4 - Consumer protection",
       "NYDFS Circular Letter No. 7 (2024)",
     ],
     test: (i) =>
@@ -116,7 +116,7 @@ export const rules: RuleDefinition[] = [
     rationale:
       "Reviewed generative output reduces external risk but still requires disclosure, logging, and drift monitoring.",
     sources: [
-      "NAIC Model Bulletin §4 — Consumer protection",
+      "NAIC Model Bulletin Section 4 - Consumer protection",
     ],
     test: (i) =>
       i.client_facing &&
@@ -133,8 +133,8 @@ export const rules: RuleDefinition[] = [
     rationale:
       "Classifier output affecting clients requires sampled review, performance monitoring, and clear escalation.",
     sources: [
-      "NAIC Model Bulletin §4 — Testing and validation",
-      "NIST AI RMF — Measure function",
+      "NAIC Model Bulletin Section 4 - Testing and validation",
+      "NIST AI RMF - Measure function",
     ],
     test: (i) => i.client_facing && i.ai_mode === "classifying",
   },
@@ -148,7 +148,7 @@ export const rules: RuleDefinition[] = [
     rationale:
       "External operation expands the attack surface and creates supervision gaps even when output stays internal to the business.",
     sources: [
-      "NAIC Model Bulletin §4 — Third party and vendor oversight",
+      "NAIC Model Bulletin Section 4 - Third party and vendor oversight",
     ],
     test: (i) =>
       (i.audience === "external" || i.audience === "both") &&
@@ -164,7 +164,7 @@ export const rules: RuleDefinition[] = [
     rationale:
       "Internal generative AI still carries hallucination and drift risk; requires basic controls even without client or regulated exposure.",
     sources: [
-      "NIST AI RMF — Govern and Manage functions",
+      "NIST AI RMF - Govern and Manage functions",
     ],
     test: (i) =>
       i.ai_mode === "generative" &&
@@ -182,8 +182,8 @@ export const rules: RuleDefinition[] = [
     rationale:
       "Public uncurated data introduces bias, IP, and privacy risk that must be evaluated before production use.",
     sources: [
-      "EU AI Act Art. 10 — Data and data governance",
-      "NAIC Model Bulletin §4 — Data governance",
+      "EU AI Act Art. 10 - Data and data governance",
+      "NAIC Model Bulletin Section 4 - Data governance",
     ],
     test: (i) => i.data_source === "public_unknown",
   },
@@ -213,8 +213,8 @@ export const rules: RuleDefinition[] = [
     rationale:
       "A High-risk use case without logging cannot be audited, investigated, or evidenced to regulators.",
     sources: [
-      "NYDFS Circular Letter No. 7 (2024) — Documentation and audit trails",
-      "EU AI Act Art. 12 — Record keeping",
+      "NYDFS Circular Letter No. 7 (2024) - Documentation and audit trails",
+      "EU AI Act Art. 12 - Record keeping",
     ],
     test: (i, baseTier) => !i.logging && baseTier === "high",
   },
@@ -306,7 +306,7 @@ export const reviewByTier: Record<Tier, ReviewForTier> = {
   },
   prohibited: {
     who: "Do not deploy.",
-    when: "—",
+    when: "Not applicable.",
     what: "Address the blocking rule(s) below and re-run the assessment.",
   },
 };

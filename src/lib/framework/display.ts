@@ -25,7 +25,7 @@ export const controlStatusLabel: Record<ControlStatus, string> = {
   required: "Required",
   recommended: "Recommended",
   not_required: "Not required",
-  not_applicable: "—",
+  not_applicable: "Not applicable",
 };
 
 export const controlStatusClass: Record<ControlStatus, string> = {
@@ -43,9 +43,9 @@ export const dataSourceLabel: Record<DataSource, string> = {
 };
 
 export const decisionAuthorityLabel: Record<DecisionAuthority, string> = {
-  recommend: "Recommends — human decides",
-  decide_with_review: "Decides — with human review",
-  decide_without_review: "Decides — without human review",
+  recommend: "Recommends - human decides",
+  decide_with_review: "Decides - with human review",
+  decide_without_review: "Decides - without human review",
   not_applicable: "Not applicable",
 };
 

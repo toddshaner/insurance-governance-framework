@@ -1,4 +1,6 @@
 import { controlsByTier, controlLabels, reviewByTier, rules } from "@/lib/framework/rules";
+import { remediationByRule } from "@/lib/framework/remediation";
+import { jurisdictionGuidance, jurisdictionOptions } from "@/lib/framework/jurisdictions";
 import {
   controlStatusClass,
   controlStatusLabel,
@@ -20,10 +22,11 @@ export default function FrameworkPage() {
       <section className="space-y-2">
         <h1 className="text-2xl font-semibold text-zinc-900">Framework</h1>
         <p className="text-sm text-zinc-600">
-          The rules, controls, and review expectations this tool uses. The
-          engine evaluates the rules below in order. The final tier is the most
-          severe tier among all fired rules. Framework v{FRAMEWORK_VERSION},
-          updated {FRAMEWORK_LAST_UPDATED}.
+          The rules, remediation guidance, controls, jurisdiction prompts, and
+          review expectations this tool uses. The engine evaluates the rules
+          below in order. The final tier is the most severe tier among all fired
+          rules. Framework v{FRAMEWORK_VERSION}, updated{" "}
+          {FRAMEWORK_LAST_UPDATED}.
         </p>
       </section>
 
@@ -82,6 +85,21 @@ export default function FrameworkPage() {
                 <span className="font-semibold text-zinc-800">Rationale:</span>{" "}
                 {r.rationale}
               </p>
+              {remediationByRule[r.id] && (
+                <div className="mt-3 rounded-md border border-zinc-200 bg-zinc-50 p-3 text-sm">
+                  <p className="font-semibold text-zinc-800">
+                    Remediation:
+                  </p>
+                  <p className="mt-1 text-zinc-700">
+                    {remediationByRule[r.id].issue}
+                  </p>
+                  <ul className="mt-2 list-disc space-y-1 pl-5 text-zinc-700">
+                    {remediationByRule[r.id].actions.map((action) => (
+                      <li key={action}>{action}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
               {r.sources.length > 0 && (
                 <ul className="mt-2 list-disc pl-5 text-xs text-zinc-500">
                   {r.sources.map((s) => (
@@ -95,6 +113,43 @@ export default function FrameworkPage() {
             </li>
           ))}
         </ul>
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-600">
+          Jurisdiction overlays
+        </h2>
+        <p className="text-sm text-zinc-600">
+          Jurisdiction prompts do not change the deterministic tier yet. They
+          identify review questions that should be included in the assessment
+          packet.
+        </p>
+        <div className="grid gap-3 md:grid-cols-2">
+          {jurisdictionOptions.map((key) => {
+            const jurisdiction = jurisdictionGuidance[key];
+            return (
+              <article
+                key={jurisdiction.key}
+                className="rounded-md border border-zinc-200 bg-white p-4"
+              >
+                <h3 className="text-sm font-semibold text-zinc-900">
+                  {jurisdiction.label}
+                </h3>
+                <p className="mt-2 text-sm leading-6 text-zinc-700">
+                  {jurisdiction.whyItMatters}
+                </p>
+                <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-zinc-600">
+                  {jurisdiction.prompts.map((prompt) => (
+                    <li key={prompt}>{prompt}</li>
+                  ))}
+                </ul>
+                <p className="mt-3 text-xs text-zinc-500">
+                  Source: {jurisdiction.source}
+                </p>
+              </article>
+            );
+          })}
+        </div>
       </section>
 
       <section className="space-y-3">
@@ -129,7 +184,7 @@ export default function FrameworkPage() {
                             className={`px-3 py-2 ${controlStatusClass[b.status]}`}
                           >
                             {controlStatusLabel[b.status]}
-                            {b.cadence ? ` · ${b.cadence}` : ""}
+                            {b.cadence ? ` - ${b.cadence}` : ""}
                           </td>
                         );
                       }

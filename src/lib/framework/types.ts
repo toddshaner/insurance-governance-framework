@@ -1,5 +1,5 @@
-export const FRAMEWORK_VERSION = "1.0";
-export const FRAMEWORK_LAST_UPDATED = "2026-04-19";
+export const FRAMEWORK_VERSION = "1.2";
+export const FRAMEWORK_LAST_UPDATED = "2026-04-26";
 
 export type Tier = "low" | "moderate" | "high" | "prohibited";
 

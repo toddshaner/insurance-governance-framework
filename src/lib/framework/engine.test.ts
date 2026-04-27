@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { classify } from "./engine";
 import { parseInput } from "./parseInput";
+import { evaluateCoverage, initialCoverageState } from "./coverage";
+import { remediationByRule } from "./remediation";
+import { rules } from "./rules";
+import { stressScenarios } from "./scenarios";
 import { tierRank, type UseCaseInput } from "./types";
 
 const base: UseCaseInput = {
@@ -20,7 +24,7 @@ const withInput = (override: Partial<UseCaseInput>): UseCaseInput => ({
   ...override,
 });
 
-describe("classify — tier outcomes", () => {
+describe("classify - tier outcomes", () => {
   it("returns Low for internal classifier with documented data and logging", () => {
     const result = classify(base);
     expect(result.tier).toBe("low");
@@ -196,7 +200,7 @@ describe("classify — tier outcomes", () => {
   });
 });
 
-describe("classify — controls and review mapping", () => {
+describe("classify - controls and review mapping", () => {
   it("Low tier: logging and version control recommended, disclosure not required", () => {
     const result = classify(base);
     expect(result.controls.logging).toBe("recommended");
@@ -233,10 +237,10 @@ describe("classify — controls and review mapping", () => {
   });
 });
 
-describe("classify — metadata", () => {
+describe("classify - metadata", () => {
   it("includes framework version and last-updated", () => {
     const result = classify(base);
-    expect(result.frameworkVersion).toBe("1.0");
+    expect(result.frameworkVersion).toBe("1.2");
     expect(result.frameworkLastUpdated).toMatch(/^\d{4}-\d{2}-\d{2}$/);
   });
 });
@@ -246,5 +250,58 @@ describe("parseInput fail-closed defaults", () => {
     const result = classify(parseInput({}));
     expect(result.tier).toBe("prohibited");
     expect(result.firedRules.map((r) => r.id)).toContain("R1");
+  });
+});
+
+describe("remediation guidance", () => {
+  it("has remediation guidance for every rule", () => {
+    for (const rule of rules) {
+      expect(remediationByRule[rule.id], rule.id).toBeDefined();
+      expect(remediationByRule[rule.id].actions.length, rule.id).toBeGreaterThan(0);
+      expect(remediationByRule[rule.id].evidence.length, rule.id).toBeGreaterThan(0);
+    }
+  });
+});
+
+describe("scenario lab", () => {
+  it("keeps current engine outcomes aligned with expected scenario tiers", () => {
+    for (const scenario of stressScenarios) {
+      const result = classify(scenario.input);
+      expect(result.tier, scenario.id).toBe(scenario.expectedTier);
+    }
+  });
+});
+
+describe("coverage readiness", () => {
+  it("flags known AI exclusions as urgent", () => {
+    const result = evaluateCoverage({
+      ...initialCoverageState,
+      policies: ["professional_eo"],
+      aiExcluded: "yes",
+      brokerDisclosed: "yes",
+      vendorIndemnity: "yes",
+      ipExposure: "no",
+      decisionImpact: "no",
+    });
+
+    expect(result.severity).toBe("urgent");
+    expect(result.findings.map((finding) => finding.title)).toContain(
+      "Known AI exclusion",
+    );
+  });
+
+  it("treats documented coverage answers as ready when no gaps are flagged", () => {
+    const result = evaluateCoverage({
+      ...initialCoverageState,
+      policies: ["cgl", "professional_eo", "cyber"],
+      aiExcluded: "no",
+      brokerDisclosed: "yes",
+      vendorIndemnity: "yes",
+      ipExposure: "no",
+      decisionImpact: "no",
+    });
+
+    expect(result.severity).toBe("ready");
+    expect(result.findings).toHaveLength(0);
   });
 });

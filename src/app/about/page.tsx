@@ -9,14 +9,19 @@ export default function AboutPage() {
       <h1 className="text-2xl font-semibold text-zinc-900">About</h1>
       <section className="space-y-3 text-sm text-zinc-800">
         <p>
-          This tool classifies a proposed AI use case in insurance operations
-          into one of four tiers — Low, Moderate, High, or Prohibited — and
-          reports the review expectations and controls required at that tier.
+          This workbench reviews a proposed AI use case in insurance operations
+          across governance tier, jurisdiction prompts, remediation guidance,
+          coverage-readiness questions, and stress-test scenarios.
         </p>
         <p>
           The framework is deterministic. The same inputs always produce the
           same tier and the same rationale. Every rule that fires is shown on
-          the result page so the decision can be traced end-to-end.
+          the assessment page so the decision can be traced end-to-end.
+        </p>
+        <p>
+          Coverage and jurisdiction prompts do not change the deterministic
+          tier. They identify questions that should be resolved with compliance,
+          broker, carrier, coverage counsel, or regulatory support.
         </p>
         <p>
           Framework v{FRAMEWORK_VERSION}, last updated{" "}
@@ -35,9 +40,11 @@ export default function AboutPage() {
         <ul className="list-disc pl-5 text-sm text-zinc-700 space-y-1">
           <li>NAIC Model Bulletin on the Use of Artificial Intelligence Systems by Insurers (2023)</li>
           <li>NYDFS Insurance Circular Letter No. 7 (2024)</li>
-          <li>Colorado SB21-169 — Restrictions on insurers' use of external consumer data and algorithms</li>
+          <li>Colorado SB21-169 - Restrictions on insurers' use of external consumer data and algorithms</li>
           <li>EU AI Act (Regulation (EU) 2024/1689)</li>
           <li>NIST AI Risk Management Framework 1.0</li>
+          <li>ISO/IEC 42001 AI management system standard</li>
+          <li>Insurance market movement toward AI-specific exclusions and endorsements</li>
         </ul>
       </section>
 
@@ -48,6 +55,8 @@ export default function AboutPage() {
         <ul className="list-disc pl-5 text-sm text-zinc-700 space-y-1">
           <li>This tool supports, not replaces, qualified legal and compliance review. Not legal advice.</li>
           <li>The framework is hardcoded. Edits require a code change.</li>
+          <li>Coverage prompts are not policy interpretation or coverage advice.</li>
+          <li>Scenario outcomes are not validated until reviewed by a qualified practitioner.</li>
           <li>The tool does not save submissions. Nothing is logged server-side.</li>
           <li>No authentication. Designed for a single user drafting assessments.</li>
         </ul>
